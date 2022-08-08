@@ -32,7 +32,7 @@
                 <newvarstrcte Offset02STLfile="deepCwind-Offset-Column-02.stl" _rem="STL file" _print="true" />
                 <newvarstrcte Offset03STLfile="deepCwind-Offset-Column-03.stl" _rem="STL file" _print="true" />
             </predefinition>
-            <definition dp="0.02" units_comment="metres (m)">
+            <definition dp="0.01" units_comment="metres (m)">
                  % 2D
                 <!--<pointmin x="#(-wave_length*1.1-semiSubLength*0.5)/modelScale" y="0.0" z="#-fluidDepth*1.25/modelScale"/>
                 <pointmax x="#(semiSubLength*0.5+wave_length*0.25+fluidDepth*slopeBeach)/modelScale" y="0.0" z="#height_aSWL/modelScale"/>-->
@@ -42,7 +42,7 @@
             </definition>
             <commands>
                 % Semisubmersible geometry
-                 % Central column
+                % Central column
                 <list name="deepCwind-0" printcall="false">
                     <drawfilestl file="$[CentralSTLfile]">
                         <drawscale x="#(1.0-4.0*Dp)/modelScale" y="#(1.0-4.0*Dp)/modelScale" z="#(1.0-1.0*Dp)/modelScale" /> % 1 / Scale

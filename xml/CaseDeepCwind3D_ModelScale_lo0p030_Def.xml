@@ -81,7 +81,7 @@
                     </drawfilestl>
                     <fillbox x="#15.0/modelScale" y="#25.0/modelScale" z="0.0"> % Seed point
                         <modefill>void</modefill>
-                        <point x="#0.0/modelScale" y="#40.0/modelScale" z="#-50.0/modelScale" /> % Minimum point
+                        <point x="#0.0/modelScale" y="#10.0/modelScale" z="#-50.0/modelScale" /> % Minimum point
                         <size x="#50.0/modelScale" y="#50.0/modelScale" z="#100.0/modelScale" /> % Box size
                     </fillbox>
                     <!--<move x="1.3" y="0" z="0" />-->
@@ -181,7 +181,7 @@
                 <_inertia x="#1.31657*pow(10.0,10.0)/modelScale_5" y="#1.31657*pow(10.0,10.0)/modelScale_5" z="#1.90647*pow(10.0,10.0)/modelScale_5" /> % 1 / Scale^5 (where Ireal = 1.31657, 1.31657, 1.90647)x10^10 kgm2
                 % 2018 
                 <massbody value="#14267000.0/modelScale_3" />  % 1 / Scale^3 (where Displacement = 14267000 kg , +mooring = 14576553 kg )
-                <center x="0.0" y="0.0" z="#-9.792/modelScale" /> % 1 / Scale (where Zreal = 9.792 m below SWL)
+                <center x="0.0" y="0.0" z="#-10.208/modelScale" /> % 1 / Scale (where Zreal = 10.208 m below SWL)
                 <inertia x="#1.344*pow(10.0,10.0)/modelScale_5" y="#1.344*pow(10.0,10.0)/modelScale_5" z="#1.396*pow(10.0,10.0)/modelScale_5" /> % 1 / Scale^5 (where Ireal = 1.344, 1.344, 1.396)x10^10 kgm2
             </floating>
         </floatings>
@@ -194,6 +194,11 @@
     </casedef>
     <execution>
         <special>
+            <!--<chrono>
+                <_savedata value="0.02" comment="Saves CSV with data exchange for each time interval (0=all steps)" />
+                <schemescale value="1" comment="Scale used to create the initial scheme of Chrono objects (default=1)" />
+				        <bodyfloating id="semiSub" mkbound="50" />
+            </chrono>-->
             <gauges>
                 <!-- Defines the default configuration for all gauges. -->
                 <default>
@@ -281,7 +286,7 @@
 						<freesurface value="0" comment="Z position of the water free surface.(default=0)" />
                         <kBot value="3.0e6" comment="Bottom stiffness constant. (default=3.0e6)" units_comment="Pa/m"/>
 						<cBot value="3.0e5" comment="Bottom damping constant. (default=3.0e5)"  units_comment="Pa*s/m" />
-						<dtM value="0.0002" comment="Desired mooring model time step. (default=0.0001)"/>
+						<dtM value="0.0001" comment="Desired mooring model time step. (default=0.0001)"/>
 						<waveKin value="0" comment="Wave kinematics flag ( 0: neglect [the only option currently supported] ). (default=0)"/>
 						<writeUnits value="yes" comment="Write units line. value=[yes|no]. (default=yes)"/>
 						<frictionCoefficient value="0" comment="General bottom friction coefficient, as a start. (default=0.0)"/>
@@ -296,7 +301,7 @@
                    	    <body ref="50" comment="Floating driven structure to attach mooring lines."/>
                     </bodies>
                     <lines>
-                   	    <linedefault comment="Shared properties for each line.">
+                   	     <linedefault comment="Shared properties for each line.">
                    	        <_ea value="#7.536*pow(10.0,8.0)/modelScale_3" comment="Line stiffness, product of elasticity modulus and cross-sectional area." units_comment="N"/>% 1 / Scale^3 (where real = 7.536x10^8 N)
                    	        <_diameter value="#0.0766/modelScale" comment="Volume-equivalent diameter of the line." units_comment="m"/> % 1 / Scale (where real = 0.0766 m)
                    	        <_massDenInAir value="#113.35/modelScale_2" comment="Mass per unit length of the line." units_comment="kg/m"/> % 1 / Scale^2 (where real = 113.35 kg/m)
@@ -403,7 +408,7 @@
             <parameter key="DtFixedFile" value="NONE" comment="Dt values are loaded from file. Use NONE to disable (default=disabled)" units_comment="milliseconds (ms)" />
             <parameter key="DtAllParticles" value="0" comment="Velocity of particles used to calculate DT. 1:All, 0:Only fluid/floating (default=0)" />
             <parameter key="TimeMax" value="50.0" comment="Time of simulation" units_comment="seconds" />
-            <parameter key="TimeOut" value="1.0" comment="Time out data" units_comment="seconds" />
+            <parameter key="TimeOut" value="0.25" comment="Time out data" units_comment="seconds" />
             <parameter key="PartsOutMax" value="1" comment="%/100 of fluid particles allowed to be excluded from domain (default=1)" units_comment="decimal" />
             <parameter key="RhopOutMin" value="700" comment="Minimum rhop valid (default=700)" units_comment="kg/m^3" />
             <parameter key="RhopOutMax" value="1300" comment="Maximum rhop valid (default=1300)" units_comment="kg/m^3" />
