@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<case>
+    <casedef>
+        <constantsdef>
+            <!--<lattice bound="2" fluid="1" /> -->
+            <gravity x="0" y="0" z="-9.81" comment="Gravitational acceleration" units_comment="m/s^2" />
+            <rhop0 value="1025" comment="Reference density of the fluid" units_comment="kg/m^3" />
+            <hswl value="0" auto="true" comment="Maximum still water level to calculate speedofsound using coefsound" units_comment="metres (m)" />
+            <gamma value="7" comment="Polytropic constant for water used in the state equation" />
+            <speedsystem value="0" auto="true" comment="Maximum system speed (by default the dam-break propagation is used)" />
+            <coefsound value="20" comment="Coefficient to multiply speedsystem" />
+            <speedsound value="0" auto="true" comment="Speed of sound to use in the simulation (by default speedofsound=coefsound*speedsystem)" />
+            <coefh value="1.2" comment="Coefficient to calculate the smoothing length (h=coefh*sqrt(3*dp^2) in 3D)" />           
+            <cflnumber value="0.2" comment="Coefficient to multiply dt" />    
+        </constantsdef>    
+        <mkconfig boundcount="230" fluidcount="9">
+            <mkorientfluid mk="0" orient="Xyz" />
+        </mkconfig>
+        <geometry>
+            <predefinition>
+                <newvar modelScale="50.0" _rem="Model scale" />
+                <newvar modelScale_2="pow(50.0,2.0)" modelScale_3="pow(50.0,3.0)" _rem="Model scale" />
+                <newvar modelScale_4="pow(50.0,4.0)" modelScale_5="pow(50.0,5.0)" _rem="Model scale" />
+                <newvar semiSubLength="75.5" _rem="Semisubmersible length" />
+                <!--<newvar wave_height="1.92" wave_period="7.5" wave_length="87.52" fluidDepth="45.0" tankWidth="125.0" _rem="Wave 1" />-->
+                <newvar wave_height="10.304" wave_period="12.1" wave_length="228.51" fluidDepth="115.0" tankWidth="125.0" _rem="Wave 5" />
+                <newvar slopeBeach="2.0" _rem="Slope of the dissipative beach" />
+                <newvar height_aSWL="40.0" _rem="Height above SWL" />
+                <!--<newvarstrcte STLfile="deepCwind-Separate.stl" _rem="STL file" _print="true" />-->
+                <newvarstrcte CentralSTLfile="deepCwind-Central-Column.stl" _rem="STL file" _print="true" />
+                <newvarstrcte Offset01STLfile="deepCwind-Offset-Column-01.stl" _rem="STL file" _print="true" />
+                <newvarstrcte Offset02STLfile="deepCwind-Offset-Column-02.stl" _rem="STL file" _print="true" />
+                <newvarstrcte Offset03STLfile="deepCwind-Offset-Column-03.stl" _rem="STL file" _print="true" />
+            </predefinition>
+            <definition dp="0.015" units_comment="metres (m)">
+                 % 2D
+                <!--<pointmin x="#(-wave_length*1.1-semiSubLength*0.5)/modelScale" y="0.0" z="#-fluidDepth*1.25/modelScale"/>
+                <pointmax x="#(semiSubLength*0.5+wave_length*0.25+fluidDepth*slopeBeach)/modelScale" y="0.0" z="#height_aSWL/modelScale"/>-->
+                % 3D
+                <pointmin x="#(-wave_length*1.1-semiSubLength*0.5)/modelScale" y="#-tankWidth*0.5/modelScale" z="#-fluidDepth*1.25/modelScale"/>
+                <pointmax x="#(semiSubLength*0.5+wave_length*0.25+fluidDepth*slopeBeach)/modelScale" y="#tankWidth*0.5/modelScale" z="#height_aSWL/modelScale"/>
+            </definition>
+            <commands>
+                % Semisubmersible geometry
+                % Central column
+                <list name="deepCwind-0" printcall="false">
+                    <drawfilestl file="$[CentralSTLfile]">
+                        <drawscale x="#(1.0-4.0*Dp)/modelScale" y="#(1.0-4.0*Dp)/modelScale" z="#(1.0-1.0*Dp)/modelScale" /> % 1 / Scale
+                        <drawmove x="0.0" y="0.0" z="#-20.0/modelScale" /> % 1 / Scale (where Zreal = 20 m below SWL)
+                        <drawrotate angx="0" angy="0" angz="-30" />
+                    </drawfilestl>
+                    <fillbox x="0.0" y="0.0" z="0.0"> % Seed point
+                        <modefill>void</modefill>
+                        <point x="#-5.0/modelScale" y="#-5.0/modelScale" z="#-50.0/modelScale" /> % Minimum point
+                        <size x="#10.0/modelScale" y="#10.0/modelScale" z="#100.0/modelScale" /> % Box size
+                    </fillbox>
+                    <!--<move x="1.3" y="0" z="0" />-->
+                </list>
+
+                % Auxiliar geometries to fill with particles the entire semisubmersible
+                % Offset column - 1
+                <list name="deepCwind-1" printcall="false">
+                    <drawfilestl file="$[Offset01STLfile]">
+                        <drawscale x="#(1.0-4.0*Dp)/modelScale" y="#(1.0-4.0*Dp)/modelScale" z="#(1.0-1.0*Dp)/modelScale" /> % 1 / Scale
+                        <drawmove x="#-2.0*Dp" y="0.0" z="#-20.0/modelScale" /> % 1 / Scale (where Zreal = 20 m below SWL)
+                        <drawrotate angx="0" angy="0" angz="-30" />
+                    </drawfilestl>
+                    <fillbox x="#-30.0/modelScale" y="0.0" z="0.0"> % Seed point
+                        <modefill>void</modefill>
+                        <point x="#-50.0/modelScale" y="#-50.0/modelScale" z="#-50.0/modelScale" /> % Minimum point
+                        <size x="#35.0/modelScale" y="#75.0/modelScale" z="#100.0/modelScale" /> % Box size
+                    </fillbox>
+                    <!--<move x="1.3" y="0" z="0" />-->
+                </list>
+                % Offset column 2
+                <list name="deepCwind-2" printcall="false">
+                    <drawfilestl file="$[Offset02STLfile]">
+                        <drawscale x="#(1.0-4.0*Dp)/modelScale" y="#(1.0-4.0*Dp)/modelScale" z="#(1.0-1.0*Dp)/modelScale" /> % 1 / Scale
+                        <drawmove x="#1.0*Dp" y="#2.0*Dp" z="#-20.0/modelScale" /> % 1 / Scale (where Zreal = 20 m below SWL)
+                        <drawrotate angx="0" angy="0" angz="-30" />
+                    </drawfilestl>
+                    <fillbox x="#15.0/modelScale" y="#25.0/modelScale" z="0.0"> % Seed point
+                        <modefill>void</modefill>
+                        <point x="#0.0/modelScale" y="#10.0/modelScale" z="#-50.0/modelScale" /> % Minimum point
+                        <size x="#50.0/modelScale" y="#50.0/modelScale" z="#100.0/modelScale" /> % Box size
+                    </fillbox>
+                    <!--<move x="1.3" y="0" z="0" />-->
+                </list>
+                % Offset column 3
+                <list name="deepCwind-3" printcall="false">
+                    <drawfilestl file="$[Offset03STLfile]">
+                        <drawscale x="#(1.0-4.0*Dp)/modelScale" y="#(1.0-4.0*Dp)/modelScale" z="#(1.0-1.0*Dp)/modelScale" /> % 1 / Scale
+                        <drawmove x="#1.0*Dp" y="#-2.0*Dp" z="#-20.0/modelScale" /> % 1 / Scale (where Zreal = 20 m below SWL)
+                        <drawrotate angx="0" angy="0" angz="-30" />
+                    </drawfilestl>
+                    <fillbox x="#15.0/modelScale" y="#-25.0/modelScale" z="0.0"> % Seed point
+                        <modefill>void</modefill>
+                        <point x="#0.0/modelScale" y="#-50.0/modelScale" z="#-50.0/modelScale" /> % Minimum point
+                        <size x="#50.0/modelScale" y="#40.0/modelScale" z="#100.0/modelScale" /> % Box size
+                    </fillbox>
+                    <!--<move x="1.3" y="0" z="0" />-->
+                </list>
+
+                % Merge geometries
+                <list name="deepCwind" printcall="false">
+                    <matrixsave />
+                    <runlist name="deepCwind-0" />
+                    <runlist name="deepCwind-1" />
+                    <runlist name="deepCwind-2" />
+                    <runlist name="deepCwind-3" />
+                    <matrixload />
+                </list>
+
+                <mainlist>
+                    <setshapemode>real | dp | bound</setshapemode>
+                    <setdrawmode mode="full" />
+                    <!--<setmkbound mk="50" />
+                    <drawbox>
+                        <boxfill>solid</boxfill>
+                        <point x="-2" y="-1.5" z="-1" />
+                        <size x="4" y="3" z="2" />
+                    </drawbox>
+                    <shapeout file="Floater" reset="true" />-->
+                    <!-- Semisubmersible -->
+                    <setmkbound mk="50" />
+                    <runlist name="deepCwind" />
+                    <shapeout file="Floater" reset="true" />
+                    <!-- Wavemaker -->
+                    <setmkbound mk="10" />
+                    <drawbox>
+                        <boxfill>solid</boxfill>
+                        <point x="#(-wave_length-semiSubLength*0.5)/modelScale" y="#-tankWidth*0.5/modelScale" z="#-fluidDepth/modelScale" />
+                        <size x="#Dp*7.0" y="#tankWidth/modelScale" z="#(fluidDepth+height_aSWL)/modelScale" />
+                    </drawbox>
+                    <shapeout file="Piston" reset="true" />
+                    <setmkbound mk="0" />
+                    <!-- Tank+beach -->
+                    <!--<drawprism mask="5 | 6">-->
+                    <drawprism mask="1 | 2 | 6 | 7"> % Without lateral walls
+                        <point x="#(semiSubLength*0.5+wave_length*0.25+fluidDepth*slopeBeach)/modelScale" y="#-tankWidth*0.5/modelScale" z="#height_aSWL/modelScale" />
+                        <point x="#(semiSubLength*0.5+wave_length*0.25)/modelScale" y="#-tankWidth*0.5/modelScale" z="#-fluidDepth/modelScale" />
+                        <point x="#(-wave_length*1.2-semiSubLength*0.5)/modelScale" y="#-tankWidth*0.5/modelScale" z="#-fluidDepth/modelScale" />
+                        <point x="#(-wave_length*1.2-semiSubLength*0.5)/modelScale" y="#-tankWidth*0.5/modelScale" z="#height_aSWL/modelScale" />
+                        <point x="#(semiSubLength*0.5+wave_length*0.25+fluidDepth*slopeBeach)/modelScale" y="#tankWidth*0.5/modelScale" z="#height_aSWL/modelScale" />
+                        <point x="#(semiSubLength*0.5+wave_length*0.25)/modelScale" y="#tankWidth*0.5/modelScale" z="#-fluidDepth/modelScale" />
+                        <point x="#(-wave_length*1.2-semiSubLength*0.5)/modelScale" y="#tankWidth*0.5/modelScale" z="#-fluidDepth/modelScale" />
+                        <point x="#(-wave_length*1.2-semiSubLength*0.5)/modelScale" y="#tankWidth*0.5/modelScale" z="#height_aSWL/modelScale" />
+                    </drawprism>
+                    <!-- Box - Hydrostatic test -->
+                    <!--<drawbox>
+                        <boxfill>all^top</boxfill>
+                        <point x="-1.0" y="-1.0" z="-0.75" />
+                        <size x="2" y="2" z="1.25" />
+                    </drawbox>-->
+                    <shapeout file="Tank" reset="true" />
+                    <setmkfluid mk="0" />
+                    <!--<fillbox x="0" y="0" z="-3">-->
+                    <fillbox x="#-wave_length*0.5/modelScale" y="0" z="#-fluidDepth*0.5/modelScale">
+                        <modefill>void</modefill>
+                        <point x="#(-wave_length-semiSubLength*0.5)/modelScale" y="#-tankWidth*0.75/modelScale" z="#-fluidDepth*1.25/modelScale" />
+                        <size x="#(wave_length+semiSubLength+wave_length*0.25+fluidDepth*slopeBeach)/modelScale" y="#tankWidth*1.50/modelScale" z="#fluidDepth*1.25/modelScale" />
+                    </fillbox>
+                </mainlist>
+            </commands>
+        </geometry>
+       <!--<floatings>
+            <floating mkbound="50" relativeweight="0.5">
+            </floating>
+        </floatings>-->
+        <!-- Define body materials  -->
+        <!-- Floating bodies -->
+        <floatings>
+            <floating mkbound="50">
+                <_massbody value="#13841160.0/(modelScale_3)" />  % 1 / Scale^3 (where Mreal no tower = 13444000 kg , Mreal with tower = 13841160 kg )
+                <_massbody value="14628933.0/pow(50.0,3.0)" />  % 1 / Scale^3 (where Displacement = 14336675 kg , +mooring = 14628933 kg )
+                <_center x="0.0" y="0.0" z="#-9.8/50.0" /> % 1 / Scale (where Zreal no tower = 14.4 m, Zreal with tower = 9.89 m below SWL)
+                <_inertia x="#1.344E10/pow(50.0,5.0)" y="#1.344E10/pow(50.0,5.0)" z="#1.396E10/pow(50.0,5.0)" /> % 1 / Scale^5 (where Ireal = 8.011, 8.011, 13.911)x10^9 kgm2
+                % 2017
+                <_massbody value="#14143400.0/modelScale_3" />  % 1 / Scale^3 (where Displacement = 14143400 kg , +mooring = 14415681 kg )
+                <_center x="0.0" y="0.0" z="#-10.20754/modelScale" /> % 1 / Scale (where Zreal = 10.20754 m below SWL)
+                <_inertia x="#1.31657*pow(10.0,10.0)/modelScale_5" y="#1.31657*pow(10.0,10.0)/modelScale_5" z="#1.90647*pow(10.0,10.0)/modelScale_5" /> % 1 / Scale^5 (where Ireal = 1.31657, 1.31657, 1.90647)x10^10 kgm2
+                % 2018 
+                <massbody value="#14267000.0/modelScale_3" />  % 1 / Scale^3 (where Displacement = 14267000 kg , +mooring = 14576553 kg )
+                <center x="0.0" y="0.0" z="#-10.208/modelScale" /> % 1 / Scale (where Zreal = 10.208 m below SWL)
+                <inertia x="#1.344*pow(10.0,10.0)/modelScale_5" y="#1.344*pow(10.0,10.0)/modelScale_5" z="#1.396*pow(10.0,10.0)/modelScale_5" /> % 1 / Scale^5 (where Ireal = 1.344, 1.344, 1.396)x10^10 kgm2
+            </floating>
+        </floatings>
+        <motion>
+            <objreal ref="10"> %% No movement is pre-assigned to the piston
+                <begin mov="1" start="0" />
+                <mvnull id="1" />
+            </objreal>
+        </motion>
+    </casedef>
+    <execution>
+        <special>
+            <!--<chrono>
+                <_savedata value="0.02" comment="Saves CSV with data exchange for each time interval (0=all steps)" />
+                <schemescale value="1" comment="Scale used to create the initial scheme of Chrono objects (default=1)" />
+				        <bodyfloating id="semiSub" mkbound="50" />
+            </chrono>-->
+            <gauges>
+                <!-- Defines the default configuration for all gauges. -->
+                <default>
+                    <savevtkpart value="true" comment="Creates VTK files for each PART (default=false)" />
+                    <computedt value="0" comment="Time between measurements. 0:all steps (default=TimeOut)" units_comment="s" />
+                    <_computetime start="0.1" end="0.2" comment="Start and end of measures. (default=simulation time)" units_comment="s" />
+                    <output value="true" comment="Creates CSV files of measurements (default=false)" />
+                    <outputdt value="0" comment="Time between output measurements. 0:all steps (default=TimeOut)" units_comment="s" />
+                    <_outputtime start="0" end="10" comment="Start and end of output measures. (default=simulation time)" units_comment="s" />
+                </default>
+                <!-- Calculates maximum z of fluid at distance of a vertical line. -->
+                <maxz name="MaxX_x09a">
+                    <point0 x="#-240.0/modelScale" y="0" z="#-fluidDepth/modelScale" comment="Bottom point" units_comment="m" />
+                    <height value="#fluidDepth*1.5/modelScale" comment="Maximum height to check" units_comment="m" />
+                    <distlimit coefdp="2" comment="Radio to check particles (coefdp*Dp)" />
+                </maxz>
+                <maxz name="MaxX_x09b">
+                    <point0 x="#-100.0/modelScale" y="0" z="#-fluidDepth/modelScale" comment="Bottom point" units_comment="m" />
+                    <height value="#fluidDepth*1.5/modelScale" comment="Maximum height to check" units_comment="m" />
+                    <distlimit coefdp="2" comment="Radio to check particles (coefdp*Dp)" />
+                </maxz>
+                <maxz name="MaxX_x09c">
+                    <point0 x="#-50.0/modelScale" y="0" z="#-fluidDepth/modelScale" comment="Bottom point" units_comment="m" />
+                    <height value="#fluidDepth*1.5/modelScale" comment="Maximum height to check" units_comment="m" />
+                    <distlimit coefdp="2" comment="Radio to check particles (coefdp*Dp)" />
+                </maxz>
+                <maxz name="MaxX_x09d">
+                    <point0 x="#-0.75*semiSubLength/modelScale" y="0" z="#-fluidDepth/modelScale" comment="Bottom point" units_comment="m" />
+                    <height value="#fluidDepth*1.5/modelScale" comment="Maximum height to check" units_comment="m" />
+                    <distlimit coefdp="2" comment="Radio to check particles (coefdp*Dp)" />
+                </maxz>
+                <maxz name="MaxX_x09e">
+                    <point0 x="#50.0/modelScale" y="0" z="#-fluidDepth/modelScale" comment="Bottom point" units_comment="m" />
+                    <height value="#fluidDepth*1.5/modelScale" comment="Maximum height to check" units_comment="m" />
+                    <distlimit coefdp="2" comment="Radio to check particles (coefdp*Dp)" />
+                </maxz>
+                <maxz name="MaxX_x09f">
+                    <point0 x="#100.0/modelScale" y="0" z="#-fluidDepth/modelScale" comment="Bottom point" units_comment="m" />
+                    <height value="#fluidDepth*1.5/modelScale" comment="Maximum height to check" units_comment="m" />
+                    <distlimit coefdp="2" comment="Radio to check particles (coefdp*Dp)" />
+                </maxz>
+            </gauges>
+            <wavepaddles> % To use a wavemaker for automatic wave generation
+                <piston> % To define the piston-type wavemaker for regular wave generation 
+                    <mkbound value="10" comment="Mk-Bound of selected particles" />
+                    <waveorder value="2" comment="Order wave generation 1:1st order, 2:2nd order (def=1)" />  % To define the wave order for regular wave generation
+                    <start value="0" comment="Start time (def=0)" />   % Instant when the piston-type wavemaker starts to move
+                    <duration value="0" comment="Movement duration, Zero is the end of simulation (def=0)" />  % Duration of the piston-type wavemaker moving
+                    <depth value="#fluidDepth/modelScale" comment="Fluid depth (def=0)" />  % Water depth at the wavemaker position % 1 / Scale (where real = 200.0 m)
+                    <pistondir x="1" y="0" z="0" comment="Movement direction (def=(1,0,0))" />  % Direction of the piston-type wavemaker in X,Y,Z.
+                    <waveheight value="#wave_height/modelScale" comment="Wave height" />  % Mean wave height to be generated. % 1 / Scale (where real-5 = 10.30 m)
+                    <waveperiod value="#wave_period/sqrt(modelScale)" comment="Wave period" />  % Wave period to be generated. % 1 / sqrt(Scale) (where real-5 = 12.1 s)
+                    <phase value="0" comment="Initial wave phase in function of PI (def=0)" />  % Phase to define the initial movement in the sinusoidal
+                    <ramp value="1" comment="Periods of ramp (def=0)" /> % Application of a transient mode(ramp) to the initial displacement (as function of wave period)
+                    <savemotion periods="30" periodsteps="30" xpos="#-100.0/modelScale" zpos="#-fluidDepth/modelScale" comment="Saves motion data. xpos and zpos are optional. zpos=-depth of the measuring point" />  %% Saves theoretical elevation and orbital velocities (for 1st and 2nd order) at a given position (xpos and zpos)
+                    <savemotion periods="30" periodsteps="30" xpos="#-50.0/modelScale" zpos="#-fluidDepth/modelScale" comment="Saves motion data. xpos and zpos are optional. zpos=-depth of the measuring point" />  %% Saves theoretical elevation and orbital velocities (for 1st and 2nd order) at a given position (xpos and zpos)
+                    <savemotion periods="30" periodsteps="30" xpos="#50.0/modelScale" zpos="#-fluidDepth/modelScale" comment="Saves motion data. xpos and zpos are optional. zpos=-depth of the measuring point" />  %% Saves theoretical elevation and orbital velocities (for 1st and 2nd order) at a given position (xpos and zpos)
+                    <savemotion periods="30" periodsteps="30" xpos="#100.0/modelScale" zpos="#-fluidDepth/modelScale" comment="Saves motion data. xpos and zpos are optional. zpos=-depth of the measuring point" />  %% Saves theoretical elevation and orbital velocities (for 1st and 2nd order) at a given position (xpos and zpos)
+                    <!--<awas_zsurf>
+                        <_startawas value="1.0" comment="Time to start AWAS correction (def=ramp*waveperiod)" />
+                        <swl value="#-Dp*0.5" comment="Still water level (free-surface water)" />
+                        <elevation value="2" comment="Order wave to calculate elevation 1:1st order, 2:2nd order (def=2)" />
+                        <gaugex valueh="5" comment="Position in X from piston to measure free-surface water (def=5*Dp)" />
+                        <gaugey value="0" comment="Position in Y to measure free-surface water" />
+                        <gaugezmin value="#-wave_height/modelScale" comment="Minimum position in Z to measure free-surface water, it must be in water (def=domain limits)" />
+                        <gaugezmax value="#wave_height/modelScale" comment="Maximum position in Z to measure free-surface water (def=domain limits)" />
+                        <_gaugedp value="0.25" comment="Resolution to measure free-surface water, it uses Dp*gaugedp (def=0.1)" />
+                        <_coefmasslimit value="0.5" comment="Coefficient to calculate mass of free-surface (def=0.5 on 3D and 0.4 on 2D)" />
+                        <savedata value="1" comment="Saves CSV with information 1:by part, 2:more info 3:by step (def=0)" />
+                        <limitace value="2" comment="Factor to limit maximum value of acceleration, with 0 disabled (def=2)" />
+                        <_correction coefstroke="1.8" coefperiod="1" powerfunc="3" comment="Drift correction configuration (def=no applied)" />
+                    </awas_zsurf>-->
+                </piston>
+            </wavepaddles>
+            <moorings>
+                <savevtk_moorings value="true" comment="Saves vtk with moorings (default=true)" />
+				<savecsv_points value="true" comment="Saves csv with link points (default=true)" />
+				<savevtk_points value="false" comment="Saves vtk with link points (default=false)" />
+                <mooredfloatings>
+                    <floating mkbound="50" comment="Mkbound of the Floating body the mooring is linked to" />
+                </mooredfloatings>
+				<moordyn comment="MoorDyn configuration"> %Loads the next configuration
+                    <solverOptions>
+                        <waterDepth value="4.0" comment="Water depth" units_comment="m"/> % 1 / Scale (where real = 200 m)
+						<freesurface value="0" comment="Z position of the water free surface.(default=0)" />
+                        <kBot value="3.0e6" comment="Bottom stiffness constant. (default=3.0e6)" units_comment="Pa/m"/>
+						<cBot value="3.0e5" comment="Bottom damping constant. (default=3.0e5)"  units_comment="Pa*s/m" />
+						<dtM value="0.0001" comment="Desired mooring model time step. (default=0.0001)"/>
+						<waveKin value="0" comment="Wave kinematics flag ( 0: neglect [the only option currently supported] ). (default=0)"/>
+						<writeUnits value="yes" comment="Write units line. value=[yes|no]. (default=yes)"/>
+						<frictionCoefficient value="0" comment="General bottom friction coefficient, as a start. (default=0.0)"/>
+                   		<fricDamp value="200" comment="Damping coefficient used to model the friction with speeds near zero. (default=200.0)"/>
+                   		<statDynFricScale value="1.0" comment="Ratio between static and dynamic friction (mu_static/mu_dynamic). (default=1.0)"/>
+                   		<dtIC value="1.0" comment="Period to analyse convergence of dynamic relaxation for initial conditions. (default=1.0)" units_comment="s"/>
+                   		<cdScaleIC value="2" comment="Factor by which to scale drag coefficients during dynamic relaxation IC generation. (default=5)"/>        
+                   		<threshIC value="0.001" comment="Convergence threshold for for initial conditions. (default=0.001)"/>
+                   		<tmaxIC value="4" comment="Max time for initial conditions generation without convergence.(default=10)" units_comment="s"/>
+                    </solverOptions>
+                    <bodies>
+                   	    <body ref="50" comment="Floating driven structure to attach mooring lines."/>
+                    </bodies>
+                    <lines>
+                   	    <linedefault comment="Shared properties for each line.">
+                   	        <_ea value="#7.536*pow(10.0,8.0)/modelScale_3" comment="Line stiffness, product of elasticity modulus and cross-sectional area." units_comment="N"/>% 1 / Scale^3 (where real = 7.536x10^8 N)
+                   	        <_diameter value="#0.0766/modelScale" comment="Volume-equivalent diameter of the line." units_comment="m"/> % 1 / Scale (where real = 0.0766 m)
+                   	        <_massDenInAir value="#113.35/modelScale_2" comment="Mass per unit length of the line." units_comment="kg/m"/> % 1 / Scale^2 (where real = 113.35 kg/m)
+                            <ea value="6028.8" comment="Line stiffness, product of elasticity modulus and cross-sectional area." units_comment="N"/>% 1 / Scale^3 (where real = 7.536x10^8 N)
+                            <!--<diameter value="0.001532" comment="Volume-equivalent diameter of the line." units_comment="m"/> % 1 / Scale (where real = 0.0766 m)-->
+                            <diameter value="0.0026752" comment="Volume-equivalent diameter of the line." units_comment="m"/> % 1 / Scale (where real = 0.13376 m)
+                            <!--<massDenInAir value="0.04534" comment="Mass per unit length of the line." units_comment="kg/m"/> % 1 / Scale^2 (where real = 113.35 kg/m)-->
+                            <massDenInAir value="0.04664" comment="Mass per unit length of the line." units_comment="kg/m"/> % 1 / Scale^2 (where real = 116.6 kg/m)
+                            <ba value="-0.8" comment="Line internal damping (BA/-zeta). (default=-0.8)" units_comment="Ns"/>
+                            <can value="0.865" comment="Transverse added mass coefficient (with respect to line displacement). (default=1.0)"/> % 1 (where real = 0.865)
+						    <cat value="0.269" comment="Tangential added mass coefficient (with respect to line displacement). (default=0.0)"/> % 1 (where real = 0.269)
+						    <cdn value="1.080" comment="Transverse drag coefficient (with respect to frontal area, d*l). (default=1.6)"/> % 1 (where real = 1.080)
+						    <cdt value="0.213" comment="Tangential drag coefficient (with respect to surface area, π*d*l). (default=0.05)"/> % 1 (where real = 0.213)
+						    <outputFlags value="pt" comment="Node output properties.(default=-) [-:None|p:Positions|v:Telocities|U:Wave Velocities|t:Tension|D:Hydrodynamic Drag Force|c=Internal Damping|s:Strain of each segment|d: rate of strain of each segment]"/>
+				        </linedefault>
+
+                        <line>  %line 0
+                            <_vesselconnection bodyref="50" x="#-30.0/modelScale" y="0.0" z="#-14.0/modelScale" /> % 1 / Scale (where real = -30, 0, -14 m)
+                            <_fixconnection x="#-852.0/modelScale" y="0.0" z="#-200.0/modelScale" /> % 1 / Scale (where real = -852, 0, -200 m)
+							<_length value="#835.5/modelScale" comment="(m)"/> % 1 / Scale (where real = 835.5 m)
+                            
+                            <vesselconnection bodyref="50" x="-0.6" y="0.0" z="-0.28" /> % 1 / Scale (where real = -30, 0, -14 m)
+                            <fixconnection x="-16.60" y="0.0" z="-4.0" /> % 1 / Scale (where real = -852, 0, -200 m)
+                            <length value="16.71" comment="(m)"/> % 1 / Scale (where real = 835.5 m)
+						    <segments value="40" />
+				        </line>
+					    <line>  %line 1
+					        <_vesselconnection bodyref="50" x="#15.0/modelScale" y="#25.0/modelScale" z="#-14.0/modelScale" /> % 1 / Scale (where real = 15, 25, -14 m)
+                            <_fixconnection x="#728.0/modelScale" y="#430.0/modelScale" z="#-160.0/modelScale" />
+                            <_fixconnection x="#418.0/modelScale" y="#725.0/modelScale" z="#-200.0/modelScale" /> % 1 / Scale (where real = -852, 0, -200 m)
+                            <_length value="#835.5/modelScale" comment="(m)"/> % 1 / Scale (where real = 835.5 m)
+
+                            <vesselconnection bodyref="50" x="0.3" y="0.5" z="-0.28" /> % 1 / Scale (where real = 15, 25, -14 m)
+                            <fixconnection x="8.3" y="14.3" z="-4.0" /> % 1 / Scale (where real = -852, 0, -200 m)
+                            <length value="16.71" comment="(m)"/> % 1 / Scale (where real = 835.5 m)
+                            <segments value="40" />
+				        </line>
+					    <line>  %line 2
+                            <_vesselconnection bodyref="50" x="#15.0/modelScale" y="#-25.0/modelScale" z="#-14.0/modelScale" /> % 1 / Scale (where real = 15, -25, -14 m)
+                            <_fixconnection x="#728.0/modelScale" y="#-430.0/modelScale" z="#-160.0/modelScale" />
+                            <_fixconnection x="#418.0/modelScale" y="#-725.0/modelScale" z="#-200.0/modelScale" /> % 1 / Scale (where real = -852, 0, -200 m)
+                            <_length value="#835.5/modelScale" comment="(m)" /> % 1 / Scale (where real = 835.5 m)
+
+                            <vesselconnection bodyref="50" x="0.3" y="-0.5" z="-0.28" /> % 1 / Scale (where real = 15, -25, -14 m)
+                            <fixconnection x="8.3" y="-14.3" z="-4.0" /> % 1 / Scale (where real = -852, 0, -200 m)
+                            <length value="16.71" comment="(m)"/> % 1 / Scale (where real = 835.5 m)
+                            <segments value="40" />
+				        </line>
+                    </lines>
+                    <savedata comment="Saves CSV with the connection properties." >
+                        <tension value="true" comment="Stores tensions at the connections.(default: value=false)"/>
+                        <force value="true" comment="Stores forces at the connections.(default: value=false)"/>
+                        <velocity value="true" comment="Stores velocities at the connections.(default: value=false)"/>
+                        <position value="true" comment="Stores positions at the connections.(default: value=false)"/>
+                    </savedata>
+                </moordyn>
+            </moorings>
+            <damping>
+                <dampingzone>
+                    <limitmin x="#(semiSubLength*0.5+wave_length*0.25)/modelScale" y="0" z="0" comment="Location where minimum reduction is applied" />
+                    <limitmax x="#(semiSubLength*0.5+wave_length*0.25+fluidDepth*slopeBeach)/modelScale" y="0" z="0" comment="Location where maximum reduction is applied" />
+                    <overlimit value="1" comment="The scope of maximum reduction over limitmax (default=0)" />
+                    <redumax value="10" comment="Maximum reduction in location limitmax (default=10)" />
+                    <factorxyz x="1" y="1" z="1" comment="Application factor in components (default x=1,y=1,z=1)" />
+                </dampingzone>
+                <dampingzone>
+                    <limitmin x="0" y="#(tankWidth*0.5-5.0)/modelScale" z="0" comment="Location where minimum reduction is applied" />
+                    <limitmax x="0" y="#(tankWidth*0.5)/modelScale" z="0" comment="Location where maximum reduction is applied" />
+                    <overlimit value="1" comment="The scope of maximum reduction over limitmax (default=0)" />
+                    <redumax value="10" comment="Maximum reduction in location limitmax (default=10)" />
+                    <factorxyz x="0" y="1" z="0" comment="Application factor in components (default x=1,y=1,z=1)" />
+                </dampingzone>
+                <dampingzone>
+                    <limitmin x="0" y="#-(tankWidth*0.5-5.0)/modelScale" z="0" comment="Location where minimum reduction is applied" />
+                    <limitmax x="0" y="#-(tankWidth*0.5)/modelScale" z="0" comment="Location where maximum reduction is applied" />
+                    <overlimit value="1" comment="The scope of maximum reduction over limitmax (default=0)" />
+                    <redumax value="10" comment="Maximum reduction in location limitmax (default=10)" />
+                    <factorxyz x="0" y="1" z="0" comment="Application factor in components (default x=1,y=1,z=1)" />
+                </dampingzone>
+            </damping>
+        </special>
+        <parameters>
+            <parameter key="FtSaveMotion" value="0.01" comment="Saves floating motion data with value output (default=0)" units_comment="seconds"/>
+            <parameter key="SavePosDouble" value="0" comment="Saves particle position using double precision (default=0)" />
+            <parameter key="StepAlgorithm" value="2" comment="Step Algorithm 1:Verlet, 2:Symplectic (default=1)" />
+            <parameter key="VerletSteps" value="40" comment="Verlet only: Number of steps to apply Euler timestepping (default=40)" />
+            <parameter key="Kernel" value="2" comment="Interaction Kernel 1:Cubic Spline, 2:Wendland (default=2)" />
+            <parameter key="ViscoTreatment" value="1" comment="Viscosity formulation 1:Artificial, 2:Laminar+SPS (default=1)" />
+            <parameter key="Visco" value="0.01" comment="Viscosity value" /> % Note alpha can depend on the resolution. A value of 0.01 is recommended for near irrotational flows.
+            <!--<parameter key="ViscoTreatment" value="2" comment="Viscosity formulation 1:Artificial, 2:Laminar+SPS (default=1)" />
+            <parameter key="Visco" value="0.000001" comment="Viscosity value" />-->
+            <parameter key="ViscoBoundFactor" value="0" comment="Multiply viscosity value with boundary (default=1)" />
+            <parameter key="DensityDT" value="2" comment="Density Diffusion Term 0:None, 1:Molteni, 2:Fourtakas, 3:Fourtakas(full) (default=0)" />
+            <parameter key="DensityDTvalue" value="0.1" comment="DDT value (default=0.1)" />
+            <parameter key="Shifting" value="0" comment="Shifting mode 0:None, 1:Ignore bound, 2:Ignore fixed, 3:Full (default=0)" />
+            <parameter key="ShiftCoef" value="-2" comment="Coefficient for shifting computation (default=-2)" />
+            <parameter key="ShiftTFS" value="0" comment="Threshold to detect free surface. Typically 1.5 for 2D and 2.75 for 3D (default=0)" />
+            <parameter key="RigidAlgorithm" value="1" comment="Rigid Algorithm 0:collision-free, 1:SPH, 2:DEM, 3:Chrono (default=1)" />
+            <parameter key="FtPause" value="0.0" comment="Time to freeze the floatings at simulation start (warmup) (default=0)" units_comment="seconds" />
+            <parameter key="CoefDtMin" value="0.05" comment="Coefficient to calculate minimum time step dtmin=coefdtmin*h/speedsound (default=0.05)" />
+            <parameter key="DtIni" value="0" comment="Initial time step. Use 0 to defult use (default=h/speedsound)" units_comment="seconds" />
+            <parameter key="DtMin" value="0" comment="Minimum time step. Use 0 to defult use (default=coefdtmin*h/speedsound)" units_comment="seconds" />
+            <parameter key="DtFixed" value="0" comment="Fixed Dt value. Use 0 to disable (default=disabled)" units_comment="seconds" />
+            <parameter key="DtFixedFile" value="NONE" comment="Dt values are loaded from file. Use NONE to disable (default=disabled)" units_comment="milliseconds (ms)" />
+            <parameter key="DtAllParticles" value="0" comment="Velocity of particles used to calculate DT. 1:All, 0:Only fluid/floating (default=0)" />
+            <parameter key="TimeMax" value="50.0" comment="Time of simulation" units_comment="seconds" />
+            <parameter key="TimeOut" value="1.0" comment="Time out data" units_comment="seconds" />
+            <parameter key="PartsOutMax" value="1" comment="%/100 of fluid particles allowed to be excluded from domain (default=1)" units_comment="decimal" />
+            <parameter key="RhopOutMin" value="700" comment="Minimum rhop valid (default=700)" units_comment="kg/m^3" />
+            <parameter key="RhopOutMax" value="1300" comment="Maximum rhop valid (default=1300)" units_comment="kg/m^3" />
+             % 2D
+            <!--<_parameter key="YPeriodicIncZ" value="0.0" comment="Increase of Z with periodic BC" units_comment="metres (m)" />-->
+            % 3D
+            <parameter key="YPeriodicIncZ" value="0.0" comment="Increase of Z with periodic BC" units_comment="metres (m)" />
+            <simulationdomain comment="Defines domain of simulation (default=Uses minimun and maximum position of the generated particles)">
+                <posmin x="default" y="default" z="default" comment="e.g.: x=0.5, y=default-1, z=default-10%" />
+                <posmax x="default" y="default" z="default" />
+            </simulationdomain>
+        </parameters>
+    </execution>
+</case>
