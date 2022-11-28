@@ -13,9 +13,24 @@ Files of wave energy converter
 
 [2021 - On the energy conversion characteristics of a top-mounted pitching absorber by using smoothed particle hydrodynamics](https://doi.org/10.1016/j.enconman.2021.114893)
 
-## Hemispherical point absorber wave energy
+[2021 - Numerical analysis of the hydrodynamic scaling effects for the Wavestar wave energy converter](https://doi.org/10.1016/j.jfluidstructs.2021.103328)
+
+[2022 - Numerical Model of Constrained Wave Energy Hyperbaric Converter under Full-Scale Sea Wave Conditions](https://doi.org/10.3390/jmse10101489)
+
+## Floating offshore wind turbine
 
 [2013 - Validation of a FAST semi-submersible floating wind turbine numerical model with DeepCwind test data](https://doi.org/10.1063/1.4796197)
+
+[2016 - Fully coupled aero-hydrodynamic analysis of a semi-submersible FOWT using a dynamic fluid body interaction approach
+](https://doi.org/10.1016/j.renene.2016.02.021)
+
+[2017 - Establishing a fully coupled CFD analysis tool for floating offshore wind turbines](https://doi.org/10.1016/j.renene.2017.04.052)
+
+[2019 - A numerical model for fully coupled aero-hydrodynamic analysis of floating offshore wind turbine](https://doi.org/10.1016/j.oceaneng.2018.12.021)
+
+[2022 - CFD simulation of floating body motion with mooring dynamics: Coupling MoorDyn with OpenFOAM](https://doi.org/10.1016/j.apor.2022.103210)
+
+[2022 - Dynamics of offshore wind turbine-seabed foundation under hydrodynamic and aerodynamic loads: A coupled numerical way](https://doi.org/10.1016/j.renene.2022.11.029)
 
 ## Hybrid point absorber wave and offshore wind energy
 
@@ -26,6 +41,16 @@ Files of wave energy converter
 [2022 - Power matrix and dynamic response of the hybrid Wavestar-DeepCwind platform under different diameters and regular wave conditions](https://doi.org/10.1016/j.oceaneng.2022.110734)
 
 [2021 - Power production of the hybrid Wavestar point absorber mounted around the Hywind spar platform and its dynamic response](https://doi.org/10.1063/5.0046590)
+
+[2022 - Novel concept of hybrid wavestar- floating offshore wind turbine system with rectilinear arrays of WECs](https://doi.org/10.1016/j.oceaneng.2022.112253)
+
+## Envirotmental study
+
+[2020 - Uncertainty assessment for the extreme hydrodynamic responses of a wind turbine semi-submersible platform using different environmental contour approaches](https://doi.org/10.1016/j.oceaneng.2019.106719)
+
+[2021 - Environmental impacts of offshore wind installation, operation and maintenance, and decommissioning activities: A case study of Brazil](https://doi.org/10.1016/j.rser.2021.110994)
+
+[2022 - Assessment of wind and wave power characteristic and potential for hybrid exploration in Australia](https://doi.org/10.1016/j.rser.2022.112747)
 
 ## Review
 
