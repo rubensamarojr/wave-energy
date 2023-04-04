@@ -1,6 +1,10 @@
 # wave-energy
 Files of wave energy converter
 
+## Tutorial to plot environmental contour
+
+[Click here](https://github.com/rubensamarojr/wave-energy/blob/main/python/environmental_contour_pnboia.ipynb)
+
 # References
 
 ## Hemispherical point absorber wave energy
@@ -44,7 +48,11 @@ Files of wave energy converter
 
 [2022 - Novel concept of hybrid wavestar- floating offshore wind turbine system with rectilinear arrays of WECs](https://doi.org/10.1016/j.oceaneng.2022.112253)
 
-## Envirotmental study
+[2023 - Conceptualization and dynamic response of an integrated system with a semi-submersible floating wind turbine and two types of wave energy converters](https://doi.org/10.1016/j.oceaneng.2022.113517)
+
+## Environmental sea state
+
+[2015 - Multivariate analysis of extreme metocean conditions for offshore wind turbines](https://doi.org/10.1016/j.strusafe.2015.03.002)
 
 [2020 - Uncertainty assessment for the extreme hydrodynamic responses of a wind turbine semi-submersible platform using different environmental contour approaches](https://doi.org/10.1016/j.oceaneng.2019.106719)
 
