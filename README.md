@@ -5,6 +5,12 @@ Files of wave energy converter
 
 [Click here](https://github.com/rubensamarojr/wave-energy/blob/main/python/environmental_contour_pnboia.ipynb)
 
+## Links
+
+[Wave calculator](https://swellbeat.com/wave-calculator)
+
+[Coastal Wiki](http://www.coastalwiki.org/wiki/Main_Page)
+
 # References
 
 ## Hemispherical point absorber wave energy
