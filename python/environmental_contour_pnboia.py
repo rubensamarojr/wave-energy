@@ -360,7 +360,7 @@ if not os.path.exists(final_directory):
 	os.makedirs(final_directory)
 
 # Save Figure
-fig_name = inpute_file_name + '_tr' + str(tr) + 'years_envirom_countor'
+fig_name = inpute_file_name + '_tr' + str(tr) + 'years_envirom_contor'
 fig.savefig(fig_directory_name + '/' + fig_name + '.png')
 plt.show()
 plt.close(fig)    # close the figure window
