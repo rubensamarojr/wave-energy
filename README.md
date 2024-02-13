@@ -3,7 +3,11 @@ Files of wave energy converter
 
 ## Tutorial to plot environmental contour
 
-[Click here](https://github.com/rubensamarojr/wave-energy/blob/main/python/environmental_contour_pnboia.ipynb)
+[Notebook - Click here](notebooks/environmental_contour_pnboia.ipynb)
+
+[Python - Click here](python/environmental_contour_pnboia.py)
+
+
 
 ## Links
 
